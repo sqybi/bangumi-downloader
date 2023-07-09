@@ -3,6 +3,7 @@ services:
   bangumi-downloader:
     image: sqybi/bangumi-downloader:latest
     build: .
+    restart: unless-stopped
     ports:
       - "10080:80"
     environment:
