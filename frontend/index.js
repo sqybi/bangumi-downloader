@@ -178,10 +178,16 @@ io.on("connection", async (socket) => {
         await downloadEpisodes();
         io.emit("bangumiList", db.data.bangumiList);
     });
+
+    socket.on("removeBangumi", async (id) => {
+        db.data.bangumiList.splice(id, 1);
+        await db.write();
+        io.emit("bangumiList", db.data.bangumiList);
+    });
 });
 
 
 setInterval(updateBangumiInfo, 60000);
 setInterval(downloadEpisodes, 5000);
 
-server.listen("80");
+server.listen("12380");

@@ -9,7 +9,7 @@
 
         socket.on("bangumiList", (bangumiList) => {
             const bangumiListDiv = document.getElementById("bangumiList");
-            let tableHtml = '<table class="bangumi-table"><thead><tr><th>名称</th><th>关键词</th><th>存储路径</th><th>下载情况（下载中/已下载/总数）</th></tr></thead><tbody>';
+            let tableHtml = '<table class="bangumi-table"><thead><tr><th>名称</th><th>关键词</th><th>存储路径</th><th>下载情况（下载中/已下载/总数）</th><th>操作</th></tr></thead><tbody>';
             for (const i in bangumiList) {
                 const bangumi = bangumiList[i];
                 let downloadingCount = 0;
@@ -26,6 +26,7 @@
                 tableHtml += "<td>" + bangumi.keyword + "</td>";
                 tableHtml += "<td>.../" + bangumi.path + "</td>";
                 tableHtml += "<td>" + downloadingCount + " / " + downloadedCount + " / " + Object.keys(bangumi.searchResults).length + "</td>";
+                tableHtml += '<td><button onclick="removeBangumi(' + i + ')">删除</button></td>';
                 tableHtml += "</tr>";
             }
             tableHtml += "</tbody></table>";
@@ -51,6 +52,13 @@
             document.getElementById("bangumiName").value,
             document.getElementById("bangumiKeyword").value,
             document.getElementById("bangumiPath").value);
+    }
+
+    function removeBangumi(id) {
+        const confimation = confirm("确定要删除番剧吗？此操作不可撤销！！！");
+        if (confimation) {
+            socket.emit("removeBangumi", id);
+        }
     }
 </script>
 </body>
