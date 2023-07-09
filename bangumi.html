@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <title>新番下载</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        const bangumiId = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
+
+        socket.on("bangumiList", (bangumiList) => {
+            const episodeListDiv = document.getElementById("episodeList");
+            const bangumi = bangumiList[parseInt(bangumiId)];
+
+            const title = "新番下载 - " + bangumi.name;
+            document.getElementsByTagName("title")[0].innerText = title;
+            document.getElementsByTagName("h1")[0].innerText = title;
+
+            let tableHtml = '<table class="bangumi-table"><thead><tr><th>标题</th><th>状态</th><th>Aria2信息</th></tr></thead><tbody>';
+            for (const key in bangumi.searchResults) {
+                const searchResult = bangumi.searchResults[key];
+                tableHtml += "<tr>";
+                tableHtml += '<th><a href="https://www.kisssub.org/show-' + key + '.html" target="_blank">' + searchResult.title + '</a></th>';
+                tableHtml += "<td>" + searchResult.status + "</td>";
+                tableHtml += "<td>" + (searchResult.ariaGid || "") + "</td>";
+                tableHtml += "</tr>";
+            }
+            tableHtml += "</tbody></table>";
+            episodeListDiv.innerHTML = tableHtml;
+        });
+    </script>
+</head>
+<body>
+<h1>新番下载</h1>
+<div class="container">
+    <div id="episodeList"></div>
+</div>
+<script>
+    function addBangumi() {
+        socket.emit("addBangumi",
+            document.getElementById("bangumiName").value,
+            document.getElementById("bangumiKeyword").value,
+            document.getElementById("bangumiPath").value);
+    }
+</script>
+</body>
+</html>

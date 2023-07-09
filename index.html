@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>新番下载</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on("bangumiList", (bangumiList) => {
+            const bangumiListDiv = document.getElementById("bangumiList");
+            let tableHtml = '<table class="bangumi-table"><thead><tr><th>名称</th><th>关键词</th><th>存储路径</th><th>下载情况（下载中/已下载/总数）</th></tr></thead><tbody>';
+            for (const i in bangumiList) {
+                const bangumi = bangumiList[i];
+                let downloadingCount = 0;
+                let downloadedCount = 0;
+                for (const j in bangumi.searchResults) {
+                    if (bangumi.searchResults[j].status == "downloading") {
+                        downloadingCount++;
+                    } else if (bangumi.searchResults[j].status == "downloaded") {
+                        downloadedCount++;
+                    }
+                }
+                tableHtml += "<tr>";
+                tableHtml += '<th><a href="/bangumi/' + i + '">' + bangumi.name + '</a></th>';
+                tableHtml += "<td>" + bangumi.keyword + "</td>";
+                tableHtml += "<td>.../" + bangumi.path + "</td>";
+                tableHtml += "<td>" + downloadingCount + " / " + downloadedCount + " / " + Object.keys(bangumi.searchResults).length + "</td>";
+                tableHtml += "</tr>";
+            }
+            tableHtml += "</tbody></table>";
+            bangumiListDiv.innerHTML = tableHtml;
+        });
+    </script>
+</head>
+<body>
+<h1>新番下载</h1>
+<div class="container" id="bangumiList"></div>
+<div class="container">
+    <label for="bangumiName">番剧名称：</label>
+    <input type="text" id="bangumiName"/>
+    <label for="bangumiKeyword">搜索关键词：</label>
+    <input type="text" id="bangumiKeyword"/>
+    <label for="bangumiPath">番剧存储路径：</label>
+    <input type="text" id="bangumiPath"/>
+    <button onclick="addBangumi()">添加番剧</button>
+</div>
+<script>
+    function addBangumi() {
+        socket.emit("addBangumi",
+            document.getElementById("bangumiName").value,
+            document.getElementById("bangumiKeyword").value,
+            document.getElementById("bangumiPath").value);
+    }
+</script>
+</body>
+</html>
