@@ -134,3 +134,5 @@ dist
 
 db.json
 .idea/
+docker-compose.yml
+data/bangumi-downloader/

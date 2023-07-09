@@ -17,7 +17,7 @@ const io = new Server(server);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const file = join(__dirname, 'db.json');
+const file = join(__dirname, 'database/db.json');
 const adapter = new JSONFile(file);
 const defaultData = {bangumiList: []};
 const db = new Low(adapter, defaultData);
@@ -184,4 +184,4 @@ io.on("connection", async (socket) => {
 setInterval(updateBangumiInfo, 60000);
 setInterval(downloadEpisodes, 5000);
 
-server.listen("10000");
+server.listen("80");

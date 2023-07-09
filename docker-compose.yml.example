@@ -1,0 +1,15 @@
+services:
+
+  bangumi-downloader:
+    image: sqybi/bangumi-downloader:latest
+    build: .
+    ports:
+      - "10080:80"
+    environment:
+      - ARIA2_HOST=127.0.0.1
+      - ARIA2_PORT=6800
+      - ARIA2_SECRET=1234abcd
+      - ARIA2_RPC_PATH=/jsonrpc
+      - ARIA2_DOWNLOAD_PATH=/downloads
+    volumes:
+      - ./data/bangumi-downloader:/data
