@@ -190,4 +190,4 @@ io.on("connection", async (socket) => {
 setInterval(updateBangumiInfo, 60000);
 setInterval(downloadEpisodes, 5000);
 
-server.listen("12380");
+server.listen("80");
