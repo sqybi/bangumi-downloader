@@ -1,4 +1,4 @@
-import http from 'node:http'
+import http, { setMaxIdleHTTPParsers } from 'node:http'
 import {dirname, join} from 'node:path'
 import {fileURLToPath} from 'node:url'
 
@@ -90,9 +90,12 @@ const updateBangumiInfo = async (id) => {
                     break;
                 }
                 page++;
+                await new Promise((resolve) => setTimeout(resolve, 1000));
             }
         } catch (error) {
             console.warn(error);
+        } finally {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         }
     }
 
@@ -111,7 +114,6 @@ const downloadEpisodes = async () => {
             const result = bangumi.searchResults[key];
             try {
                 if (result.status === "ready") {
-
                     const episodeUrl = buildEpisodeUrl(key);
                     const episodeResponse = await axios.get(episodeUrl);
                     const hash = episodeResponse.data.match(hashRegex)[1];
@@ -121,6 +123,8 @@ const downloadEpisodes = async () => {
                     const gid = await aria2.call("addUri", [magnet], {dir: buildPath(bangumi.path)});
                     result.ariaGid = gid;
                     result.status = "downloading";
+
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
                 } else if (result.status === "downloading") {
                     const response = await aria2.call("tellStatus", result.ariaGid, ["status"]);
                     if (response.status === "complete") {
@@ -187,7 +191,7 @@ io.on("connection", async (socket) => {
 });
 
 
-setInterval(updateBangumiInfo, 60000);
+setInterval(updateBangumiInfo, 600000);
 setInterval(downloadEpisodes, 5000);
 
 server.listen("80");
